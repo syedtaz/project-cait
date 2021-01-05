@@ -107,7 +107,7 @@ function simulate(ncell=1, tmax=0.05, rates = [37.1 47.874 16.837 43.535 0.29825
     initialize!(m)
 
     # Load the dependency graph.
-    @load "dependency_graph.jld2" dgraph
+    @load "src/dependency_graph.jld2" dgraph
 
     for cell in m.cells
         while  t <= tmax
