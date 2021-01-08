@@ -1,6 +1,6 @@
 function calculate_propensity(c::Cell, propRules::Vector{Function}, indice::Array{Int})
     for i in indice
-        c.A[i] = abs((propRules[i](c)))
+        c.A[i] = (propRules[i](c))
     end
 end
 
@@ -10,33 +10,34 @@ function initialize!(model::Model)
         calculate_propensity(cell, model.propRules, collect(1:34))
         # Generate M independent, uniform (0,1) random numbers, rk, and for each k set Pk=ln1/rk.
         for i in 1:34
-            cell.Pk[i] = cell.A[i] > 0 ? log(1/rand()) : Inf
-            delT = (cell.Pk[i]-cell.Tk[i])/cell.A[i]
+            cell.Pk[i] = log(1/rand())
+            delT = cell.A[i] > 0 ? (cell.Pk[i]-cell.Tk[i])/cell.A[i] : Inf
             enqueue!(cell.pq, i, delT)
         end
     end
 end
 
-function min_delayed(cell::Cell, t::Float64)
+function min_delayed(cell::Cell)
     min = Inf
     sk = 0
     for i in 1:8
-        if first(cell.pq_delayed[i])-t < min
-            min = first(cell.pq_delayed[i])-t
+        if first(cell.pq_delayed[i]) < min
+            min = first(cell.pq_delayed[i])
             sk = i
         end
     end
     return (sk, min)
 end
 
-function jump(cell::Cell, t::Float64)
-    sk, min = min_delayed(cell,t)
+function jump(cell::Cell)
+    sk, min = min_delayed(cell)
     if sk != 0
         reg = isless(peek(cell.pq)[2], min)
         dt = reg ? peek(cell.pq)[2] : min
         event = reg ? dequeue!(cell.pq) : sk + 34
         if !(reg)
-            pop!(cell.pq_delayed[sk])
+            deleteat!(cell.pq_delayed[sk],1)
+            cell.pos[sk] -= 1
         end
     else
         dt = peek(cell.pq)[2]
@@ -47,8 +48,7 @@ end
 
 function update_dtk!(cell::Cell)
     for i in 1:34
-        delT = (cell.Pk[i]-cell.Tk[i])/cell.A[i]
-        cell.pq[i] = delT
+        cell.pq[i] = cell.A[i] > 0 ? (cell.Pk[i]-cell.Tk[i])/cell.A[i] : Inf
     end
 end
 
