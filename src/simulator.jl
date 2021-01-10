@@ -78,7 +78,7 @@ function instantiate_model()
                 (x,a) -> x.reactants .+= a * @SMatrix [-1 0 0 0 0 0 0 0 0 0 0 0 0 0]
                 x -> insert!(x.pq_delayed[6], x.pos[6], (x.t[1]+x.rates[1,24]))
                 (x,a) -> x.reactants .+= a * @SMatrix [0 -1 0 0 0 0 0 0 0 0 0 0 0 0]
-                x -> insert!(x.pq_delayed[7], x.pos[7], (x.t[1]+0.5))
+                x -> insert!(x.pq_delayed[7], x.pos[7], (x.t[1]))
                 (x,a) -> x.reactants .+= a * @SMatrix [0 0 -1 0 0 0 0 0 0 0 0 0 0 0]
                 x -> insert!(x.pq_delayed[8], x.pos[8], (x.t[1]+x.rates[1,29]))
                 (x,a) -> x.reactants .+= a * @SMatrix [0 0 0 0 0 0 0 0 0 0 0 0 -1 0]
@@ -113,6 +113,8 @@ function simulate(ncell=1, tmax=0.05,
 
     # Load the dependency graph.
     @load "src/dependency_graph.jld2" dgraph
+
+
     T_map = Dict{Integer, Integer}(1 => 1, 9 => 2, 15 => 3, 25 => 4, 27 => 5, 29 => 6, 31 => 7, 33 => 8)
     D_map = Dict{Integer, Integer}(35 => 1, 36 => 9, 37 => 15, 38 => 25, 39 => 27, 40 => 29, 41 => 31, 42 => 33)
     potential_reactions = @SMatrix [1 9 15 25 27 29 31 33]
@@ -120,7 +122,8 @@ function simulate(ncell=1, tmax=0.05,
 
     Threads.@threads for cell in m.cells
         while (cell.t[1] <= tmax) #&& (ni < nmax)
-            dt, event = jump(cell)
+            dt, event = jump(cell, cell.t[1])
+            #dt, event = jump2(cell)
             cell.t[1] += dt
             if event in potential_reactions
                 m.stoichiometry[event](cell)
@@ -133,7 +136,7 @@ function simulate(ncell=1, tmax=0.05,
             end
             store!(cell)
             update_times!(cell,dt)
-            update_channel!(cell,dt)
+            #update_channel!(cell, dt)
             if event <= 34
                 cell.Pk[event] += log(1/rand())
                 if !(event in potential_reactions)
