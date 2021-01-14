@@ -17,12 +17,12 @@ function initialize!(model::Model)
     end
 end
 
-function min_delayed(cell::Cell)
+function min_delayed(cell::Cell, t::Float64)
     min = Inf
     sk = 0
     for i in 1:8
-        if first(cell.pq_delayed[i]) < min
-            min = first(cell.pq_delayed[i])
+        if (first(cell.pq_delayed[i])-t) < min
+            min = first(cell.pq_delayed[i])-t
             sk = i
         end
     end
@@ -30,24 +30,7 @@ function min_delayed(cell::Cell)
 end
 
 function jump(cell::Cell, t::Float64)
-    sk, min = min_delayed(cell)
-    if sk != 0
-        reg = isless(peek(cell.pq)[2], (min-t))
-        dt = reg ? peek(cell.pq)[2] : (min-t)
-        event = reg ? dequeue!(cell.pq) : sk + 34
-        if !(reg)
-            deleteat!(cell.pq_delayed[sk],1)
-            cell.pos[sk] -= 1
-        end
-    else
-        dt = peek(cell.pq)[2]
-        event = dequeue!(cell.pq)
-    end
-    return (dt, event)
-end
-
-function jump2(cell::Cell)
-    sk, min = min_delayed(cell)
+    sk, min = min_delayed(cell, t)
     if sk != 0
         reg = isless(peek(cell.pq)[2], min)
         dt = reg ? peek(cell.pq)[2] : min
