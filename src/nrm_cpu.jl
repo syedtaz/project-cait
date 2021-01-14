@@ -1,13 +1,13 @@
-function calculate_propensity(c::Cell, propRules::Vector{Function}, indice::Array{Int})
+function calculate_propensity!(c::Cell, propRules::Vector{Function}, indice::Array{Int})
     for i in indice
         c.A[i] = (propRules[i](c))
     end
 end
 
-function initialize!(model::Model)
+function initialize_propensities!(model::Model)
     for cell in model.cells
     # Calculate the propensity function, ak, for each reaction.
-        calculate_propensity(cell, model.propRules, collect(1:34))
+        calculate_propensity!(cell, model.propRules, collect(1:34))
         # Generate M independent, uniform (0,1) random numbers, rk, and for each k set Pk=ln1/rk.
         for i in 1:34
             cell.Pk[i] = log(1/rand())
@@ -46,20 +46,13 @@ function jump(cell::Cell, t::Float64)
     return (dt, event)
 end
 
-function update_dtk!(cell::Cell)
+function update_tjump!(cell::Cell)
     for i in 1:34
         cell.pq[i] = cell.A[i] > 0 ? (cell.Pk[i]-cell.Tk[i])/cell.A[i] : Inf
     end
 end
 
-function update_propensity!(cell::Cell, event::Int, model::Model, dgraph::Dict{Int64,Array{Int64,N} where N})
-    dependents = get(dgraph, event, nothing)
-    if dependents != nothing
-        calculate_propensity(cell, model.propRules, dgraph[event])
-    end
-end
-
-function update_times!(cell::Cell,dt::Float64)
+function update_tk!(cell::Cell,dt::Float64)
     for i in 1:34
         cell.Tk[i] += cell.A[i]*dt
     end
