@@ -1,9 +1,9 @@
 <div align="center"><img src='logo.png' alt='Cait.jl Logo'></img></div>
-<center>
+
 | **Documentation** |
 |:---:|
 |[![][docs-stable-img]][docs-stable-url] |
-</center>
+
 # caitlyn.jl
 
 Code for stochastically simulating oscillatory systems in multicellular models of zebrafish. Current iterations include stable CPU and GPU versions written in Julia. There is also an experimental low-level version in CUDA C. Code by Tazmilur Saad and Ahmet Ay.
