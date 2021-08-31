@@ -22,7 +22,7 @@ julia> include("src/simulator.jl")
 
 This will load all of the functions of the package into the REPL scope. If there are dependencies that are not present on your system Julia's package manager will download and precompile them. Since Julia is just-in-time compiled, the first run of any function in the package will trigger compilation and thus will be relatively slower than subsequent runs.
 
-Conside looking into [Revise.jl](https://github.com/timholy/Revise.jl) and documentation online on how to manage Julia REPL sessions and compilation times.
+Conside looking into [Revise.jl](https://github.com/timholy/Revise.jl) and related documentation online on how to manage Julia REPL sessions and compilation times.
 
 ## Quickstart
 
@@ -32,7 +32,7 @@ The following code will create a 1-cell model with 100 seconds of simulation tim
 julia> model = nrm(1,100)
 ```
 
-You can plot this using Plots.jl. For example, the following code snippet will plot the cell contents vs time, using your system's default plotting backend (GTK+ on macOS, )
+You can plot this using Plots.jl. For example, the following code snippet will plot the cell contents vs time, using your system's default plotting backend (GTK+ on macOS). If you are running this code on AWS / any other remote environment, you should use the `unicodeplots()` backend.
 
 ```
 using Plots
