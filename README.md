@@ -48,4 +48,4 @@ This is one of the possible outputs.
 Thanks to Professor Ahmet Ay for guiding this project.
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
-[docs-stable-url]: https://syedtaz.github.io/caitlyn.jl/docs/build/index.html
+[docs-stable-url]: https://syedtaz.github.io/caitlyn.jl/build/index.html
