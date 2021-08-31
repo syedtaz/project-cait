@@ -1,8 +1,10 @@
 <div align="center"><img src='logo.png' alt='Cait.jl Logo'></img></div>
 
-# Project Cait
+# caitlyn.jl
 
 Code for stochastically simulating oscillatory systems in multicellular models of zebrafish. Current iterations include stable CPU and GPU versions written in Julia. There is also an experimental low-level version in CUDA C. Code by Tazmilur Saad and Ahmet Ay.
+
+Please see the documentation for more details on the algorithm and the underlying implementation.
 
 ## Installation 
 
@@ -30,12 +32,14 @@ The following code will create a 1-cell model with 100 seconds of simulation tim
 julia> model = nrm(1,100)
 ```
 
-You can plot this using Plots.jl. For example, the following code snippet will plot the cell contents vs time in the Julia REPL which is useful for plotting in remote environments.
+You can plot this using Plots.jl. For example, the following code snippet will plot the cell contents vs time, using your system's default plotting backend (GTK+ on macOS, )
 
 ```
 using Plots
-unicodeplots()
 plot(model.cells[1].Time, model.cells[1].levels)
 ```
 
-> Consult the documentation for more details on the algorithm and the underlying implementation.
+This is one of the possible outputs.
+
+<img src='example.png' alt='Example output'>
+
